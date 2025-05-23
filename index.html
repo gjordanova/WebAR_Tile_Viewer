@@ -42,9 +42,9 @@
   // ✅ Dynamically load correct model for platform
   if (isIOS) {
     viewer.setAttribute("ios-src", "walls.usdz");
-    viewer.setAttribute("src", "tile30x30.glb"); // fallback
+    viewer.setAttribute("src", "tile3.glb"); // fallback
   } else if (isAndroid) {
-    viewer.setAttribute("src", "tile30x30.glb");
+    viewer.setAttribute("src", "tile3.glb");
   }
 
   // ✅ Ensure AR is triggered on click

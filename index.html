@@ -2,45 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>30x30 Gray Tile AR</title>
+  <title>Tile 30x30 GLB AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
       margin: 0;
       font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    model-viewer {
-      width: 100vw;
-      height: 90vh;
-      background-color: #f0f0f0;
+      text-align: center;
+      background: #f0f0f0;
     }
 
     h1 {
       margin-top: 1rem;
+      font-size: 24px;
     }
 
-    button {
+    model-viewer {
+      width: 100vw;
+      height: 85vh;
+    }
+
+    #ar-button {
       position: fixed;
-      bottom: 20px;
+      bottom: 80px; /* lifted up from the edge */
       left: 50%;
       transform: translateX(-50%);
-      padding: 12px 24px;
-      font-size: 18px;
-      background: #333;
-      color: white;
+      padding: 20px 40px; /* bigger button */
+      font-size: 22px;
+      background-color: #222;
+      color: #fff;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      z-index: 10;
     }
 
-    #fallback {
-      color: red;
-      margin-top: 10px;
+    #ar-button:hover {
+      background-color: #444;
     }
   </style>
 </head>
@@ -50,30 +49,25 @@
 <model-viewer id="viewer"
               src="tile30x30.glb"
               ios-src="walls.usdz"
-              alt="30x30 Gray Marble Tile"
+              alt="Gray Marble Tile"
               ar
-              ar-modes="scene-viewer quick-look webxr"
-              camera-controls
+              ar-modes="scene-viewer quick-look"
               auto-rotate
-              environment-image="neutral"
-              exposure="1"
-              shadow-intensity="1">
-  <div id="fallback" slot="poster">Model failed to load or is missing</div>
+              camera-controls
+              environment-image="neutral">
 </model-viewer>
 
-<button id="ar-button">View in AR</button>
+<button id="ar-button">📱 View in AR</button>
 
 <script>
   const viewer = document.getElementById('viewer');
-  const arButton = document.getElementById('ar-button');
-
-  arButton.addEventListener('click', () => {
-    if (viewer && viewer.activateAR) {
+  document.getElementById('ar-button').onclick = () => {
+    if (viewer && typeof viewer.activateAR === 'function') {
       viewer.activateAR();
     } else {
-      alert("AR is not supported or model failed to load.");
+      alert("AR is not supported or the model is not loaded.");
     }
-  });
+  };
 </script>
 </body>
 </html>

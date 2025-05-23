@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,24 +24,24 @@
   </style>
 </head>
 <body>
-  <h1>View 30x30 Gray Tile in AR</h1>
-  <model-viewer id="viewer"
-    src="tile30x30.glb"
-    alt="30x30 Gray Marble Tile"
-    ar
-    ar-modes="scene-viewer quick-look"
-    auto-rotate
-    camera-controls
-    environment-image="neutral"
-    ios-src="walls.usdz">
-  </model-viewer>
-  <button id="ar-button">View in AR</button>
-  <script>
-    const viewer = document.getElementById('viewer');
-    const arButton = document.getElementById('ar-button');
-    arButton.addEventListener('click', () => {
-      viewer.activateAR();
-    });
-  </script>
+<h1>View 30x30 Gray Tile in AR</h1>
+<model-viewer id="viewer"
+              src="tile30x30.glb"
+              alt="30x30 Gray Marble Tile"
+              ar
+              ar-modes="scene-viewer quick-look"
+              auto-rotate
+              camera-controls
+              environment-image="neutral"
+              ios-src="walls.usdz">
+</model-viewer>
+<button id="ar-button">View in AR</button>
+<script>
+  const viewer = document.getElementById('viewer');
+  const arButton = document.getElementById('ar-button');
+  arButton.addEventListener('click', () => {
+    viewer.activateAR();
+  });
+</script>
 </body>
 </html>

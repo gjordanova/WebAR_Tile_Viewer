@@ -3,19 +3,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cross-Platform AR Tile</title>
+  <title>30x30 Gray Tile AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body { margin: 0; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; }
     model-viewer { width: 100vw; height: 90vh; }
     h1 { margin: 1rem 0; }
+    button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>View Tile in AR</h1>
-  <model-viewer
+  <h1>View 30x30 Gray Tile in AR</h1>
+  <model-viewer id="viewer"
     src="tile30x30.glb"
-    alt="30x30 Marble Tile"
+    alt="30x30 Gray Marble Tile"
     ar
     ar-modes="scene-viewer quick-look"
     auto-rotate
@@ -23,5 +36,13 @@
     environment-image="neutral"
     ios-src="walls.usdz">
   </model-viewer>
+  <button id="ar-button">View in AR</button>
+  <script>
+    const viewer = document.getElementById('viewer');
+    const arButton = document.getElementById('ar-button');
+    arButton.addEventListener('click', () => {
+      viewer.activateAR();
+    });
+  </script>
 </body>
 </html>

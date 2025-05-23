@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,30 +5,71 @@
   <title>Tile 30x30 GLB AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    body { margin: 0; font-family: sans-serif; text-align: center; }
-    model-viewer { width: 100vw; height: 90vh; }
-    button {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      padding: 12px 24px; font-size: 18px; background: #333; color: white;
-      border: none; border-radius: 6px; cursor: pointer;
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      margin: 1rem 0;
+      font-size: 22px;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 85vh;
+    }
+
+    #ar-button {
+      position: fixed;
+      bottom: 60px; /* moved higher from 20px */
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 16px 32px; /* increased size */
+      font-size: 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    #ar-button:hover {
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>View 30x30 Gray Tile (GLB) in AR</h1>
-  <model-viewer id="viewer"
-    src="tile30x30_textured.glb"
-    alt="Gray Marble Tile"
-    ar
-    ar-modes="scene-viewer"
-    auto-rotate
-    camera-controls
-    environment-image="neutral">
-  </model-viewer>
-  <button id="ar-button">View in AR</button>
-  <script>
-    const viewer = document.getElementById('viewer');
-    document.getElementById('ar-button').onclick = () => viewer.activateAR();
-  </script>
+<h1>View 30x30 Gray Tile in AR</h1>
+
+<model-viewer id="viewer"
+              src="tile30x30_textured.glb"
+              alt="Gray Marble Tile"
+              ar
+              ar-modes="scene-viewer"
+              auto-rotate
+              camera-controls
+              environment-image="neutral">
+</model-viewer>
+
+<button id="ar-button">View in AR</button>
+
+<script>
+  const viewer = document.getElementById('viewer');
+  const arButton = document.getElementById('ar-button');
+
+  arButton.addEventListener('click', () => {
+    if (viewer && typeof viewer.activateAR === 'function') {
+      console.log("Activating AR");
+      viewer.activateAR();
+    } else {
+      alert("AR not supported or model not loaded.");
+      console.warn("AR could not be activated.");
+    }
+  });
+</script>
 </body>
 </html>

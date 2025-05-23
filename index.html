@@ -1,55 +1,18 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>WebAR Tile Viewer</title>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+  <meta charset="UTF-8">
+  <title>View Tile in AR</title>
   <style>
-    body { margin: 0; overflow: hidden; }
-    button {
-      padding: 10px;
-      margin: 10px;
-      font-size: 16px;
-      position: relative;
-      z-index: 2;
-    }
-    .ui-buttons {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-    }
+    body { text-align: center; font-family: sans-serif; margin-top: 50px; }
+    img { width: 300px; cursor: pointer; }
   </style>
 </head>
-
 <body>
-<div class="ui-buttons">
-  <button onclick="setTexture('tile1.jpg')">White Marble</button>
-  <button onclick="setTexture('tile2.jpg')">Gray Marble</button>
-</div>
-
-<a-scene embedded arjs>
-  <a-assets>
-    <img id="tile" src="tile1.jpg">
-  </a-assets>
-
-  <!-- Use Hiro marker to trigger the AR plane -->
-  <a-marker preset="hiro">
-    <a-plane id="tileSurface"
-             rotation="-90 0 0"
-             width="2"
-             height="2"
-             material="src: #tile; repeat: 4 4; side: double;">
-    </a-plane>
-  </a-marker>
-
-  <a-entity camera></a-entity>
-</a-scene>
-
-<script>
-  function setTexture(filename) {
-    document.getElementById('tile').setAttribute('src', filename);
-  }
-</script>
+  <h1>View Tile in AR</h1>
+  <a href="tile_viewer.usdz" rel="ar">
+    <img src="tile1.jpg" alt="View in AR">
+  </a>
 </body>
 </html>

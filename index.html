@@ -23,19 +23,17 @@
 </head>
 
 <body>
-<!-- UI for selecting textures -->
 <div class="ui-buttons">
   <button onclick="setTexture('tile1.jpg')">White Marble</button>
   <button onclick="setTexture('tile2.jpg')">Gray Marble</button>
 </div>
 
-<!-- AR scene -->
 <a-scene embedded arjs>
   <a-assets>
     <img id="tile" src="tile1.jpg">
   </a-assets>
 
-  <!-- Marker -->
+  <!-- Use Hiro marker to trigger the AR plane -->
   <a-marker preset="hiro">
     <a-plane id="tileSurface"
              rotation="-90 0 0"

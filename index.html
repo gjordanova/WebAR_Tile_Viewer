@@ -5,9 +5,25 @@
   <title>30x30 Gray Tile AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    body { margin: 0; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; }
-    model-viewer { width: 100vw; height: 90vh; }
-    h1 { margin: 1rem 0; }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 90vh;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      margin-top: 1rem;
+    }
+
     button {
       position: fixed;
       bottom: 20px;
@@ -21,26 +37,42 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
+    #fallback {
+      color: red;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 <h1>View 30x30 Gray Tile in AR</h1>
+
 <model-viewer id="viewer"
               src="tile30x30.glb"
+              ios-src="walls.usdz"
               alt="30x30 Gray Marble Tile"
               ar
-              ar-modes="scene-viewer quick-look"
-              auto-rotate
+              ar-modes="scene-viewer quick-look webxr"
               camera-controls
+              auto-rotate
               environment-image="neutral"
-              ios-src="walls.usdz">
+              exposure="1"
+              shadow-intensity="1">
+  <div id="fallback" slot="poster">Model failed to load or is missing</div>
 </model-viewer>
+
 <button id="ar-button">View in AR</button>
+
 <script>
   const viewer = document.getElementById('viewer');
   const arButton = document.getElementById('ar-button');
+
   arButton.addEventListener('click', () => {
-    viewer.activateAR();
+    if (viewer && viewer.activateAR) {
+      viewer.activateAR();
+    } else {
+      alert("AR is not supported or model failed to load.");
+    }
   });
 </script>
 </body>

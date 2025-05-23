@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tile 30x30 GLB AR</title>
+  <title>30x30 Tile in AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
       margin: 0;
       font-family: sans-serif;
       text-align: center;
-      background: #f0f0f0;
+      background: #f9f9f9;
     }
 
     h1 {
-      margin-top: 1rem;
       font-size: 24px;
+      margin: 1rem;
     }
 
     model-viewer {
@@ -24,31 +24,28 @@
 
     #ar-button {
       position: fixed;
-      bottom: 80px; /* lifted up from the edge */
+      bottom: 80px;
       left: 50%;
       transform: translateX(-50%);
-      padding: 20px 40px; /* bigger button */
-      font-size: 22px;
-      background-color: #222;
+      padding: 18px 36px;
+      font-size: 20px;
+      background-color: #333;
       color: #fff;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-      z-index: 10;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
     }
 
     #ar-button:hover {
-      background-color: #444;
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-<h1>View 30x30 Gray Tile in AR</h1>
+<h1>View 30x30 Tile in AR</h1>
 
 <model-viewer id="viewer"
-              src="tile30x30.glb"
-              ios-src="walls.usdz"
               alt="Gray Marble Tile"
               ar
               ar-modes="scene-viewer quick-look"
@@ -61,11 +58,24 @@
 
 <script>
   const viewer = document.getElementById('viewer');
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  const isAndroid = /android/i.test(userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+  // Dynamically set the correct model source
+  if (isIOS) {
+    viewer.setAttribute("ios-src", "walls.usdz");
+    viewer.setAttribute("src", "tile30x30.glb"); // fallback for visibility
+  } else if (isAndroid) {
+    viewer.setAttribute("src", "tile30x30.glb");
+  }
+
   document.getElementById('ar-button').onclick = () => {
     if (viewer && typeof viewer.activateAR === 'function') {
       viewer.activateAR();
     } else {
-      alert("AR is not supported or the model is not loaded.");
+      alert("AR not supported or model not loaded.");
     }
   };
 </script>

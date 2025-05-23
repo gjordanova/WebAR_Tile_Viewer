@@ -1,44 +1,57 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>AR Tile Preview</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
-    <style>
-      button {
-        padding: 10px;
-        margin: 10px;
-        font-size: 16px;
-      }
-    </style>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <!-- Texture selection UI -->
-    <div style="position: absolute; z-index: 10;">
-      <button onclick="setTexture('tile1.jpg')">White Marble</button>
-      <button onclick="setTexture('tile2.jpg')">Gray Marble</button>
-    </div>
+<head>
+  <title>WebAR Tile Viewer</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .ui-buttons {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+    }
+  </style>
+</head>
 
-    <!-- AR Scene -->
-    <a-scene embedded arjs>
-      <a-assets>
-        <img id="tile" src="tile1.jpg">
-      </a-assets>
+<body>
+<!-- UI for selecting textures -->
+<div class="ui-buttons">
+  <button onclick="setTexture('tile1.jpg')">White Marble</button>
+  <button onclick="setTexture('tile2.jpg')">Gray Marble</button>
+</div>
 
-      <!-- Plane that will receive texture -->
-      <a-plane id="tileSurface"
-               position="0 0 -1"
-               rotation="-90 0 0"
-               width="2"
-               height="2"
-               material="src: #tile; repeat: 4 4; side: double;"></a-plane>
-    </a-scene>
+<!-- AR scene -->
+<a-scene embedded arjs>
+  <a-assets>
+    <img id="tile" src="tile1.jpg">
+  </a-assets>
 
-    <script>
-      function setTexture(filename) {
-        document.getElementById('tile').setAttribute('src', filename);
-      }
-    </script>
-  </body>
+  <!-- Marker -->
+  <a-marker preset="hiro">
+    <a-plane id="tileSurface"
+             rotation="-90 0 0"
+             width="2"
+             height="2"
+             material="src: #tile; repeat: 4 4; side: double;">
+    </a-plane>
+  </a-marker>
+
+  <a-entity camera></a-entity>
+</a-scene>
+
+<script>
+  function setTexture(filename) {
+    document.getElementById('tile').setAttribute('src', filename);
+  }
+</script>
+</body>
 </html>

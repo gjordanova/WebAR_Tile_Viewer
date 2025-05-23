@@ -1,87 +1,85 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>WebXR AR Tile Demo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/webxr/ARButton.js"></script>
+  <title>30x30 Tile in AR</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 1rem;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 85vh;
+    }
+
+    #ar-button {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 20px 40px;
+      font-size: 22px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    #ar-button:hover {
+      background-color: #555;
+    }
   </style>
 </head>
 <body>
+<h1>View 30x30 Tile in AR</h1>
+
+<model-viewer id="viewer"
+              alt="Gray Marble Tile"
+              ar
+              ar-modes="scene-viewer quick-look"
+              camera-controls
+              auto-rotate
+              environment-image="neutral"
+              exposure="1.0">
+</model-viewer>
+
+<button id="ar-button">📱 View in AR</button>
+
 <script>
-  let camera, scene, renderer;
-  let controller;
+  const viewer = document.getElementById('viewer');
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-  init();
-  function init() {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
+  const isAndroid = /android/i.test(userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera();
-
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.xr.enabled = true;
-    container.appendChild(renderer.domElement);
-
-    document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
-
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-    light.position.set(0.5, 1, 0.25);
-    scene.add(light);
-
-    const textureLoader = new THREE.TextureLoader();
-    const tileTexture = textureLoader.load('tile2.jpg');
-    tileTexture.wrapS = tileTexture.wrapT = THREE.RepeatWrapping;
-    tileTexture.repeat.set(2, 2);
-
-    const tileMaterial = new THREE.MeshStandardMaterial({ map: tileTexture });
-    const tileGeometry = new THREE.PlaneGeometry(0.6, 0.6);
-    const tileMesh = new THREE.Mesh(tileGeometry, tileMaterial);
-    tileMesh.rotateX(-Math.PI / 2);
-
-    let hitTestSource = null;
-    let localSpace = null;
-
-    controller = renderer.xr.getController(0);
-    controller.addEventListener('select', () => {
-      if (hitTestSource && localSpace) {
-        const frame = renderer.xr.getFrame();
-        const viewerPose = frame.getViewerPose(localSpace);
-        if (viewerPose) {
-          const results = frame.getHitTestResults(hitTestSource);
-          if (results.length > 0) {
-            const hit = results[0];
-            const pose = hit.getPose(localSpace);
-            const clone = tileMesh.clone();
-            clone.position.set(pose.transform.position.x, pose.transform.position.y, pose.transform.position.z);
-            scene.add(clone);
-          }
-        }
-      }
-    });
-    scene.add(controller);
-
-    renderer.setAnimationLoop((timestamp, frame) => {
-      if (frame) {
-        const session = renderer.xr.getSession();
-        session.requestReferenceSpace('viewer').then((refSpace) => {
-          session.requestHitTestSource({ space: refSpace }).then((source) => {
-            hitTestSource = source;
-            localSpace = renderer.xr.getReferenceSpace();
-          });
-        });
-      }
-      renderer.render(scene, camera);
-    });
+  // ✅ Dynamically load correct model for platform
+  if (isIOS) {
+    viewer.setAttribute("ios-src", "walls.usdz");
+    viewer.setAttribute("src", "tile30x30.glb"); // fallback
+  } else if (isAndroid) {
+    viewer.setAttribute("src", "tile30x30.glb");
   }
+
+  // ✅ Ensure AR is triggered on click
+  document.getElementById('ar-button').onclick = () => {
+    if (viewer && typeof viewer.activateAR === 'function') {
+      viewer.activateAR();
+    } else {
+      alert("AR not supported or model not loaded.");
+    }
+  };
 </script>
 </body>
 </html>

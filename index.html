@@ -2,66 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tile AR Demo</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAR Tile Viewer</title>
+
+  <!-- 1. Load model-viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+
   <style>
     body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f9f9f9;
       font-family: sans-serif;
-      text-align: center;
-      padding: 2em;
     }
-    h1 {
-      margin-bottom: 1em;
-    }
-    a.button {
-      display: inline-block;
-      margin: 1em auto;
-      padding: 1em 2em;
-      background: #007AFF;
-      color: white;
-      text-decoration: none;
-      font-size: 1.1em;
-      border-radius: 8px;
-    }
-    p.small {
-      font-size: 0.8em;
-      color: #555;
+    model-viewer {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      background-color: #ffffff;
     }
   </style>
 </head>
 <body>
 
-<h1>Preview Your Tile in AR</h1>
-
-<!-- Android: ARCore Scene Viewer intent -->
-<a class="button"
-   href="intent://arvr.google.com/scene-viewer/1.2
-       ?file=https://your-domain.com/tile30x30.glb
-       &mode=ar_preferred
-       &vertical=true
-       &disableOcclusion=false
-     #Intent;
-       scheme=https;
-       package=com.google.android.googlequicksearchbox;
-       action=android.intent.action.VIEW;
-       S.browser_fallback_url=https://your-domain.com;
-     end;">
-  📱 View Tile in AR
-</a>
-
-<p class="small">
-  • On Android: taps launches Scene Viewer with wall+floor placement and depth occlusion<br>
-  • On iOS: use the Quick Look button below
-</p>
-
-<!-- iOS Quick Look fallback -->
+<!-- 2. Your AR-enabled model -->
 <model-viewer
-        style="width: 100%; max-width: 400px; margin: 2em auto; display: block;"
         src="tile30x30.glb"
         ios-src="tile30x30.usdz"
+        poster="floor_tile.jpg"
+        alt="30×30 tile preview"
         ar
-        ar-modes="quick-look scene-viewer"
-        environment-image="neutral"
+        ar-modes="webxr scene-viewer quick-look"
         camera-controls
         auto-rotate>
 </model-viewer>

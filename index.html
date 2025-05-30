@@ -1,29 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  …
-  <script type="module" src="js/main.js"></script>
+  <meta charset="UTF-8">
+  <title>30x30 Tile in AR</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body { text-align: center; font-family: sans-serif; margin-top: 50px; }
+    button {
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<!-- AR content (canvas or <model-viewer>) will be injected here by your scripts -->
+<h1>View 30x30 Tile in AR</h1>
 
-<!-- Debug AR button—only visible on desktop for testing -->
-<button id="debugAR" style="position:fixed;bottom:1rem;left:1rem;z-index:1000;">
-  Enter AR (desktop test)
-</button>
+<model-viewer id="viewer"
+              alt="Gray Marble Tile"
+              ar
+              ar-modes="scene-viewer quick-look"
+              camera-controls
+              auto-rotate
+              environment-image="neutral"
+              exposure="1.0">
+</model-viewer>
+
+<button id="ar-button">📱 View in AR</button>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('debugAR');
-    btn.addEventListener('click', () => {
-      const mv = document.querySelector('model-viewer');
-      if (mv && mv.activateAR) {
-        mv.activateAR();
-      } else {
-        console.warn('No <model-viewer> found or activateAR() unavailable');
-      }
-    });
-  });
+  const viewer = document.getElementById('viewer');
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  const isAndroid = /android/i.test(userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+  // ✅ Dynamically load correct model for platform
+  if (isIOS) {
+    viewer.setAttribute("ios-src", "pattern.usdz");
+    viewer.setAttribute("src", "tile3.glb"); // fallback
+  } else if (isAndroid) {
+    viewer.setAttribute("src", "tile3.glb");
+  }
+
+  // ✅ Ensure AR is triggered on click
+  document.getElementById('ar-button').onclick = () => {
+    if (viewer && typeof viewer.activateAR === 'function') {
+      viewer.activateAR();
+    } else {
+      alert("AR not supported or model not loaded.");
+    }
+  };
 </script>
 </body>
 </html>

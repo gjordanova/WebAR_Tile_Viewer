@@ -2,164 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AR Tile Viewer with Occlusion</title>
+  <title>Tile AR Demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    body { margin: 0; overflow: hidden; }
-    #info {
-      position: absolute;
-      top: 1em; left: 1em;
-      padding: 0.5em 1em;
-      background: rgba(0,0,0,0.5);
-      color: white;
+    body {
       font-family: sans-serif;
-      border-radius: 4px;
-      z-index: 1;
+      text-align: center;
+      padding: 2em;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    a.button {
+      display: inline-block;
+      margin: 1em auto;
+      padding: 1em 2em;
+      background: #007AFF;
+      color: white;
+      text-decoration: none;
+      font-size: 1.1em;
+      border-radius: 8px;
+    }
+    p.small {
+      font-size: 0.8em;
+      color: #555;
     }
   </style>
 </head>
 <body>
-<div id="info">
-  Tap the AR button to open your camera, then tap again to place tiles.
-  Move around—tiles will be cut out behind real objects.
-</div>
 
-<!-- THIS is the ONE script block -->
-<script type="module">
-  import * as THREE from 'https://unpkg.com/three@0.153.0/build/three.module.js';
-  import { XRButton } from 'https://unpkg.com/three@0.153.0/examples/jsm/webxr/XRButton.js';
+<h1>Preview Your Tile in AR</h1>
 
-  let camera, scene, renderer;
-  let reticle, tileMesh, hitTestSource = null, hitTestSourceRequested = false;
-  const DEPTH_UNIFORM = 'depthMap';
+<!-- Android: ARCore Scene Viewer intent -->
+<a class="button"
+   href="intent://arvr.google.com/scene-viewer/1.2
+       ?file=https://your-domain.com/tile30x30.glb
+       &mode=ar_preferred
+       &vertical=true
+       &disableOcclusion=false
+     #Intent;
+       scheme=https;
+       package=com.google.android.googlequicksearchbox;
+       action=android.intent.action.VIEW;
+       S.browser_fallback_url=https://your-domain.com;
+     end;">
+  📱 View Tile in AR
+</a>
 
-  initAR();
-  animate();
+<p class="small">
+  • On Android: taps launches Scene Viewer with wall+floor placement and depth occlusion<br>
+  • On iOS: use the Quick Look button below
+</p>
 
-  function initAR() {
-    // Scene + camera
-    scene  = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 20);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1));
+<!-- iOS Quick Look fallback -->
+<model-viewer
+        style="width: 100%; max-width: 400px; margin: 2em auto; display: block;"
+        src="tile30x30.glb"
+        ios-src="tile30x30.usdz"
+        ar
+        ar-modes="quick-look scene-viewer"
+        environment-image="neutral"
+        camera-controls
+        auto-rotate>
+</model-viewer>
 
-    // Renderer + XR
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.xr.enabled = true;
-    document.body.appendChild(renderer.domElement);
-
-    // AR button (automatically shown on AR-capable devices)
-    document.body.appendChild( XRButton.createButton(renderer, {
-      requiredFeatures:    ['hit-test'],
-      optionalFeatures:    ['depth-sensing'],
-      depthSensing: {
-        usagePreference:     ['cpu-optimized'],
-        dataFormatPreference:['luminance-alpha']
-      }
-    }) );
-
-    // Reticle for hit-test
-    const ringGeo = new THREE.RingGeometry(0.15, 0.20, 32).rotateX(-Math.PI/2);
-    const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
-    reticle = new THREE.Mesh(ringGeo, ringMat);
-    reticle.matrixAutoUpdate = false;
-    reticle.visible = false;
-    scene.add(reticle);
-
-    // Tile material + occlusion
-    const texture      = new THREE.TextureLoader().load('floor_tile.jpg');
-    const tileMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-    tileMaterial.onBeforeCompile = shader => {
-      shader.uniforms[DEPTH_UNIFORM] = { value: null };
-      shader.uniforms.resolution       = { value: new THREE.Vector2(window.innerWidth, window.innerHeight) };
-
-      shader.fragmentShader = `
-          uniform sampler2D ${DEPTH_UNIFORM};
-          uniform vec2 resolution;
-        ` + shader.fragmentShader;
-
-      shader.fragmentShader = shader.fragmentShader.replace(
-              /gl_FragColor = vec4\( outgoingLight, diffuseColor\.a \);/,
-              `
-            vec2 uv = gl_FragCoord.xy / resolution;
-            float sceneDepth = texture2D(${DEPTH_UNIFORM}, uv).r;
-            if (gl_FragCoord.z > sceneDepth + 0.02) discard;
-            gl_FragColor = vec4(outgoingLight, diffuseColor.a);
-          `
-      );
-
-      tileMaterial.userData.shader = shader;
-    };
-
-    // Place tile on tap
-    renderer.domElement.addEventListener('click', () => {
-      if (reticle.visible && !tileMesh) {
-        const geo = new THREE.PlaneGeometry(1, 1);
-        tileMesh = new THREE.Mesh(geo, tileMaterial);
-        tileMesh.rotation.x = -Math.PI/2;
-        tileMesh.applyMatrix4(reticle.matrix);
-        scene.add(tileMesh);
-      }
-    });
-
-    window.addEventListener('resize', onWindowResize);
-  }
-
-  function onWindowResize() {
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-
-  function animate() {
-    renderer.setAnimationLoop(render);
-  }
-
-  function render(time, frame) {
-    // Hit-test setup
-    const session = renderer.xr.getSession();
-    if (session && !hitTestSourceRequested) {
-      session.requestReferenceSpace('viewer').then(r =>
-              session.requestHitTestSource({ space: r }).then(src => hitTestSource = src)
-      );
-      session.addEventListener('end', () => {
-        hitTestSourceRequested = false;
-        hitTestSource = null;
-      });
-      hitTestSourceRequested = true;
-    }
-
-    // Hit-test each frame
-    if (hitTestSource && frame) {
-      const refSpace = renderer.xr.getReferenceSpace();
-      const hits     = frame.getHitTestResults(hitTestSource);
-      if (hits.length) {
-        const pose = hits[0].getPose(refSpace);
-        reticle.visible = true;
-        reticle.matrix.fromArray(pose.transform.matrix);
-      } else {
-        reticle.visible = false;
-      }
-    }
-
-    // Depth occlusion
-    if (frame && tileMesh) {
-      const view      = frame.views[0];
-      const depthInfo = frame.getDepthInformation(view);
-      if (depthInfo) {
-        const w      = depthInfo.width, h = depthInfo.height;
-        const buf    = new Uint16Array(w * h * 2);
-        depthInfo.data.copyTo(buf);
-        const depthTex = new THREE.DataTexture(buf, w, h, THREE.LuminanceAlphaFormat, THREE.UnsignedShortType);
-        depthTex.needsUpdate = true;
-
-        const sh = tileMesh.material.userData.shader;
-        sh.uniforms[DEPTH_UNIFORM].value   = depthTex;
-        sh.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
-      }
-    }
-
-    renderer.render(scene, camera);
-  }
-</script>
 </body>
 </html>

@@ -41,7 +41,7 @@
 
   // ✅ Dynamically load correct model for platform
   if (isIOS) {
-    viewer.setAttribute("ios-src", "walls.usdz");
+    viewer.setAttribute("ios-src", "pattern.usdz");
     viewer.setAttribute("src", "tile3.glb"); // fallback
   } else if (isAndroid) {
     viewer.setAttribute("src", "tile3.glb");

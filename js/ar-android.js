@@ -23,7 +23,7 @@ export default async function initAndroidAR() {
 
   // Load tile texture
   const loader = new THREE.TextureLoader();
-  const texture = loader.load('../assets/textures/tile.png', () => {
+  const texture = loader.load('../assets/textures/tile3.glb', () => {
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(10, 10);
   });

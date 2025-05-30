@@ -7,8 +7,8 @@ export default function initIosFallback() {
 
   script.onload = () => {
     const mv = document.createElement('model-viewer');
-    mv.src = 'assets/models/tile-plane.glb';
-    mv.iosSrc = 'assets/models/tile-plane.usdz';
+    mv.src = 'assets/models/tile3.glb';
+    mv.iosSrc = 'assets/models/wall3.usdz';
     mv.setAttribute('ar', '');
     mv.setAttribute('ar-placement', 'floor wall');
     mv.setAttribute('ar-modes', 'scene-viewer quick-look');

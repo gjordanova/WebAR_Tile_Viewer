@@ -1,29 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  …
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tile Painter AR</title>
+  <link rel="stylesheet" href="css/style.css">
   <script type="module" src="js/main.js"></script>
 </head>
 <body>
-<!-- AR content (canvas or <model-viewer>) will be injected here by your scripts -->
+<!-- This button will only appear on mobile -->
+<button id="enter-ar-btn">Enter AR</button>
 
-<!-- Debug AR button—only visible on desktop for testing -->
-<button id="debugAR" style="position:fixed;bottom:1rem;left:1rem;z-index:1000;">
-  Enter AR (desktop test)
-</button>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('debugAR');
-    btn.addEventListener('click', () => {
-      const mv = document.querySelector('model-viewer');
-      if (mv && mv.activateAR) {
-        mv.activateAR();
-      } else {
-        console.warn('No <model-viewer> found or activateAR() unavailable');
-      }
-    });
-  });
-</script>
+<!-- AR content (Three.js canvas or <model-viewer>) gets injected by your scripts -->
 </body>
 </html>

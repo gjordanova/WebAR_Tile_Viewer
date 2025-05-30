@@ -1,14 +1,27 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
-canvas,
-model-viewer {
-  display: block;
-  width: 100%;
-  height: 100%;
+/* Mobile AR button */
+#enter-ar-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #006fbb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 18px;
+  z-index: 1000;
+  display: none;        /* hidden by default until we detect mobile */
+  cursor: pointer;
+}
+#enter-ar-btn:hover {
+  background-color: #005ba1;
 }

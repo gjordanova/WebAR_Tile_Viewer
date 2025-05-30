@@ -2,13 +2,27 @@ import initAndroidAR from './ar-android.js';
 import initIosFallback from './ar-ios-fallback.js';
 
 async function boot() {
-  const supported =
-    navigator.xr && await navigator.xr.isSessionSupported('immersive-ar');
+  const btn = document.getElementById('enter-ar-btn');
 
-  if (supported) {
-    initAndroidAR();
+  // Detect WebXR support
+  const hasWebXR = navigator.xr
+      && await navigator.xr.isSessionSupported('immersive-ar');
+
+  if (hasWebXR) {
+    // Android path
+    btn.style.display = 'block';
+    btn.addEventListener('click', () => {
+      btn.style.display = 'none';    // hide once tapped
+      initAndroidAR();
+    });
   } else {
-    initIosFallback();
+    // iOS path (Quick Look)
+    btn.style.display = 'block';
+    btn.innerText = 'Place in AR';
+    btn.addEventListener('click', () => {
+      btn.style.display = 'none';
+      initIosFallback();
+    });
   }
 }
 
